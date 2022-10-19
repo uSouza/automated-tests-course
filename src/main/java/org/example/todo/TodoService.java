@@ -6,6 +6,12 @@ class TodoService {
 
     private final TodoRepository todoRepository;
 
+    static class TodoItemNotFoundException extends RuntimeException {
+        TodoItemNotFoundException() {
+            super("Todo Item not found.");
+        }
+    }
+
     TodoService(TodoRepository todoRepository) {
         this.todoRepository = todoRepository;
     }
@@ -18,7 +24,10 @@ class TodoService {
     }
 
     TodoItem findById(Long id) {
-        return todoRepository.findById(id);
+        if (id == null) {
+            throw new IllegalArgumentException("id must not be null.");
+        }
+        return todoRepository.findById(id).orElseThrow(TodoItemNotFoundException::new);
     }
 
     List<TodoItem> findAll() {
@@ -26,22 +35,19 @@ class TodoService {
     }
 
     boolean delete(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("id must not be null.");
+        }
         return todoRepository.delete(id);
     }
 
     void complete(Long id) {
-        var todo = todoRepository.findById(id);
+        if (id == null) {
+            throw new IllegalArgumentException("id must not be null.");
+        }
+        var todo = todoRepository.findById(id).orElseThrow(TodoItemNotFoundException::new);
         todo.complete();
         todoRepository.save(todo);
     }
 
-    public static void main(String[] args) {
-        var todoService = new TodoService(new InMemoryTodoRepository());
-
-        var todoItem = todoService.save(new TodoItem("Unit test remind", "Learn how to mock classes", "Programming", false));
-
-        todoService.complete(todoItem.getId());
-
-        System.out.println(todoItem.isDone());
-    }
 }

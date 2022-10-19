@@ -4,6 +4,7 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 final class InMemoryTodoRepository implements TodoRepository {
 
@@ -23,8 +24,8 @@ final class InMemoryTodoRepository implements TodoRepository {
     }
 
     @Override
-    public TodoItem findById(long id) {
-        return todoItems.get(id);
+    public Optional<TodoItem> findById(long id) {
+        return Optional.ofNullable(todoItems.get(id));
     }
 
     @Override
