@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.example.weekday.Weekday.stringToWeekday;
+import static org.example.weekday.Weekday.WeekdayNotFoundException;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class WeekdayTest {
@@ -13,6 +14,7 @@ public class WeekdayTest {
     void testDomingo() {
         assertEquals(0, stringToWeekday("dom"));
         assertEquals(0, stringToWeekday("domingo"));
+        assertEquals(0, stringToWeekday("  DOMinGO  "));
     }
 
     @Test
@@ -20,6 +22,7 @@ public class WeekdayTest {
     void testSegunda() {
         assertEquals(1, stringToWeekday("seg"));
         assertEquals(1, stringToWeekday("segunda"));
+        assertEquals(1, stringToWeekday("  SegUNDA  "));
     }
 
     @Test
@@ -27,6 +30,7 @@ public class WeekdayTest {
     void testTerca() {
         assertEquals(2, stringToWeekday("ter"));
         assertEquals(2, stringToWeekday("terça"));
+        assertEquals(2, stringToWeekday("  TeR  "));
     }
 
     @Test
@@ -34,6 +38,7 @@ public class WeekdayTest {
     void testQuarta() {
         assertEquals(3, stringToWeekday("qua"));
         assertEquals(3, stringToWeekday("quarta"));
+        assertEquals(3, stringToWeekday("\n QuARTA \n"));
     }
 
     @Test
@@ -41,6 +46,7 @@ public class WeekdayTest {
     void testQuinta() {
         assertEquals(4, stringToWeekday("qui"));
         assertEquals(4, stringToWeekday("quinta"));
+        assertEquals(4, stringToWeekday("\tQuI\t"));
     }
 
     @Test
@@ -48,6 +54,7 @@ public class WeekdayTest {
     void testSexta() {
         assertEquals(5, stringToWeekday("sex"));
         assertEquals(5, stringToWeekday("sexta"));
+        assertEquals(5, stringToWeekday("  sEXTa  "));
     }
 
     @Test
@@ -58,8 +65,14 @@ public class WeekdayTest {
     }
 
     @Test
-    @DisplayName("Given a non-existing weekday, then must return -1.")
+    @DisplayName("Given a non-existing weekday, then must throw a WeekdayNotFound exception.")
     void testNonExistingWeekday() {
-        assertEquals(-1, stringToWeekday("inexistente"));
+        assertThrows(WeekdayNotFoundException.class, () -> stringToWeekday("inexistente"));
+    }
+
+    @Test
+    @DisplayName("Given a null weekday, then must throw a WeekdayNotFound exception.")
+    void testNullWeekday() {
+        assertThrows(WeekdayNotFoundException.class, () -> stringToWeekday(null));
     }
 }

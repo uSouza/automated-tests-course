@@ -1,31 +1,44 @@
 package org.example.weekday;
 
+import java.util.List;
+
 public final class Weekday {
 
     private Weekday() {
     }
 
-    public static void main(String[] args) {
-        System.out.println(stringToWeekday("dom"));
+    record Day(String fullName, String shortName, int index) {
     }
 
-    public static int stringToWeekday(String weekday) {
-        final var weekdays = new String[]{"domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"};
-        final var shortWeekdays = new String[]{"dom", "seg", "ter", "qua", "qui", "sex", "sab"};
+    static class WeekdayNotFoundException extends RuntimeException {
+        WeekdayNotFoundException() {
+            super("Weekday not found.");
+        }
+    }
 
-        var result = -1;
+    private static final List<Day> WEEKDAYS = List.of(
+        new Day("domingo", "dom", 0),
+        new Day("segunda", "seg", 1),
+        new Day("terça", "ter", 2),
+        new Day("quarta", "qua", 3),
+        new Day("quinta", "qui", 4),
+        new Day("sexta", "sex", 5),
+        new Day("sábado", "sab", 6)
+    );
 
-        for (int i = 0; i < weekdays.length; i++) {
-            if (weekday.equals(shortWeekdays[i])) {
-                result = i;
-                break;
-            }
-            if (weekday.equals(weekdays[i])) {
-                result = i;
-                break;
-            }
+    public static int stringToWeekday(String rawWeekday) {
+        if (rawWeekday == null) {
+            throw new WeekdayNotFoundException();
         }
 
-        return result;
+        var cleanWeekday = rawWeekday.trim();
+
+        return WEEKDAYS.stream().filter(weekday
+                -> weekday.fullName.equalsIgnoreCase(cleanWeekday) ||
+                weekday.shortName.equalsIgnoreCase(cleanWeekday))
+            .findFirst()
+            .orElseThrow(WeekdayNotFoundException::new)
+            .index;
     }
+
 }
